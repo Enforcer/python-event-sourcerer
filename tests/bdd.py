@@ -76,9 +76,9 @@ class Stream:
 
 @dataclass
 class Subscription:
-    _subscription: Iterator[Recorded | None] | Iterator[es.Entry]
+    _subscription: Iterator[Recorded | None]
 
-    def next_received_record_is(self, expected: Recorded | es.Entry) -> None:
+    def next_received_record_is(self, expected: Recorded) -> None:
         received = next(self._subscription)
         assert expected == received, f"{expected} != {received}"
 
@@ -123,7 +123,7 @@ class InTransactionListener:
         except IndexError:
             return None
 
-    def next_received_record_is(self, expected: Recorded | es.Entry) -> None:
+    def next_received_record_is(self, expected: Recorded) -> None:
         received = next(self)
         assert expected == received, f"{expected} != {received}"
 

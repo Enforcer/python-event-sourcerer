@@ -25,6 +25,4 @@ def any_wrapped_event(for_event: TEvent) -> WrappedEvent[TEvent]:
 def any_record(event: WrappedEvent | Event, on_stream: StreamId = ANY) -> Recorded:
     if isinstance(event, Event):
         event = any_wrapped_event(event)
-    return Recorded.model_construct(
-        wrapped_event=event, stream_id=on_stream, position=ANY
-    )
+    return Recorded(wrapped_event=event, stream_id=on_stream, position=ANY)

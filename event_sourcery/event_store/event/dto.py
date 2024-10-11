@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, ClassVar, Generic, TypeAlias, TypeVar
 from uuid import UUID, uuid4
@@ -76,10 +77,8 @@ class WrappedEvent(BaseModel, Generic[TEvent], extra="forbid"):
         return WrappedEvent[TEvent](event=event, version=version)
 
 
-class Entry(BaseModel):
+@dataclass(frozen=True)
+class Recorded:
     wrapped_event: WrappedEvent
     stream_id: StreamId
-
-
-class Recorded(Entry):
     position: Position

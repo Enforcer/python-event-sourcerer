@@ -1,6 +1,5 @@
 __all__ = [
     "Context",
-    "Entry",
     "Event",
     "EventRegistry",
     "WrappedEvent",
@@ -14,7 +13,6 @@ __all__ = [
 
 from event_sourcery.event_store.event.dto import (
     Context,
-    Entry,
     Event,
     Position,
     RawEvent,

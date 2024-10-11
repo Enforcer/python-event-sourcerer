@@ -2,7 +2,6 @@ __all__ = [
     "Backend",
     "BackendFactory",
     "Dispatcher",
-    "Entry",
     "Event",
     "EventRegistry",
     "EventStore",
@@ -29,7 +28,6 @@ __all__ = [
 from event_sourcery.event_store import exceptions, factory, interfaces, subscription
 from event_sourcery.event_store.dispatcher import Dispatcher, Listener
 from event_sourcery.event_store.event import (
-    Entry,
     Event,
     EventRegistry,
     Position,
