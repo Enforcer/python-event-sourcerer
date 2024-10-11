@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
                     "stream_name",
                     models.CharField(blank=True, max_length=255, null=True),
                 ),
+                ("tenant_id", models.CharField(max_length=255)),
                 ("position", models.IntegerField()),
                 ("tries_left", models.IntegerField(default=3)),
             ],
@@ -32,11 +33,12 @@ class Migration(migrations.Migration):
                 ("id", models.BigAutoField(primary_key=True, serialize=False)),
                 ("uuid", models.UUIDField(default=uuid.uuid4, editable=False)),
                 ("name", models.CharField(blank=True, max_length=255, null=True)),
+                ("tenant_id", models.CharField(max_length=255)),
                 ("category", models.CharField(default="", max_length=255)),
                 ("version", models.BigIntegerField(blank=True, null=True)),
             ],
             options={
-                "unique_together": {("name", "category"), ("uuid", "category")},
+                "unique_together": {("name", "category", "tenant_id"), ("uuid", "category", "tenant_id")},
             },
         ),
         migrations.CreateModel(

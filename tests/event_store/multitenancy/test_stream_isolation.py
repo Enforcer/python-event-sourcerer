@@ -3,8 +3,8 @@ import pytest
 from event_sourcery.event_store import Event, EventStore, StreamId
 
 pytestmark = pytest.mark.skip_backend(
-    backend=["esdb", "django"],
-    reason="Skipped for now, for the sake of PoC.",
+    backend=["esdb"],
+    reason="Not implemented yet in the ESDB backend.",
 )
 
 
@@ -64,3 +64,7 @@ def test_streams_with_same_id_or_name_can_coexist(
     tenant_2_stream = tenant_2.load_stream(stream_id)
     assert len(tenant_2_stream) == 1
     assert tenant_2_stream[0].event == tenant_2_event
+
+
+def test_snapshot_from_one_tenant_does_not_leak_to_other_tenant() -> None:
+    pass

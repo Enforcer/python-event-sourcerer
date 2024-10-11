@@ -32,11 +32,13 @@ from event_sourcery.event_store.interfaces import (
 )
 from event_sourcery.event_store.outbox import Outbox
 from event_sourcery.event_store.stream_id import StreamId
+from event_sourcery.event_store.tenant_id import DEFAULT_TENANT, TenantId
 from event_sourcery.event_store.versioning import NO_VERSIONING, Versioning
 
 
 @dataclass
 class Storage:
+    tenant_id: TenantId = DEFAULT_TENANT
     events: list[RawEvent] = field(default_factory=list, init=False)
     _data: dict[StreamId, list[RawEvent]] = field(default_factory=dict, init=False)
     _versions: dict[StreamId, int | None] = field(default_factory=dict, init=False)
@@ -104,7 +106,9 @@ class InMemorySubscription(Iterator[list[RecordedRaw]]):
                 break
 
         return [
-            RecordedRaw(entry=copy(record), position=position)
+            RecordedRaw(
+                entry=copy(record), position=position, tenant_id=self._storage.tenant_id
+            )
             for record, position in batch
         ]
 
@@ -233,7 +237,9 @@ class InMemoryStorageStrategy(StorageStrategy):
 
     def scoped_for_tenant(self, tenant_id: str) -> Self:
         return type(self)(
-            storage=Storage(), dispatcher=self._dispatcher, outbox_strategy=self._outbox
+            storage=Storage(tenant_id=tenant_id),
+            dispatcher=self._dispatcher,
+            outbox_strategy=self._outbox,
         )
 
     def fetch_events(
@@ -257,7 +263,7 @@ class InMemoryStorageStrategy(StorageStrategy):
         self._ensure_stream(stream_id=stream_id, versioning=versioning)
         self._storage.append(events)
         records = [
-            RecordedRaw(entry=raw, position=position)
+            RecordedRaw(entry=raw, position=position, tenant_id=self._storage.tenant_id)
             for position, raw in enumerate(events, start=position + 1)
         ]
         if self._outbox:

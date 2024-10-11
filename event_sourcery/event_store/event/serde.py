@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import cast
 
 from event_sourcery.event_store.event.dto import (
@@ -18,7 +18,7 @@ class Serde:
     registry: EventRegistry
 
     def deserialize(self, event: RawEvent) -> WrappedEvent:
-        event_as_dict = dict(event)
+        event_as_dict = asdict(event)
         del event_as_dict["stream_id"]
         del event_as_dict["name"]
         data = cast(Mapping, event_as_dict.pop("data"))
@@ -36,6 +36,7 @@ class Serde:
             wrapped_event=self.deserialize(record.entry),
             stream_id=record.entry.stream_id,
             position=record.position,
+            tenant_id=record.tenant_id,
         )
 
     def serialize(

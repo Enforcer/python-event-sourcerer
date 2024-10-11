@@ -78,4 +78,5 @@ def raw_outbox(from_entry: OutboxEntry) -> RecordedRaw:
             context=from_entry.data["context"],
         ),
         position=from_entry.position,
+        tenant_id=from_entry.tenant_id,
     )

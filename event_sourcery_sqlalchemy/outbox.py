@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Generator, Iterator
 from contextlib import AbstractContextManager, contextmanager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime
 from typing import cast
 from uuid import UUID
@@ -31,16 +31,17 @@ class SqlAlchemyOutboxStorageStrategy(OutboxStorageStrategy):
             if not self._filterer(record.entry):
                 continue
 
-            as_dict = dict(record.entry)
+            as_dict = asdict(record.entry)
             created_at = cast(datetime, as_dict["created_at"])
             as_dict["created_at"] = created_at.isoformat()
             as_dict["uuid"] = str(as_dict["uuid"])
-            as_dict["stream_id"] = str(as_dict["stream_id"])
+            as_dict["stream_id"] = record.entry.stream_id.hex
             rows.append(
                 {
                     "created_at": datetime.utcnow(),
                     "data": as_dict,
                     "stream_name": record.entry.stream_id.name,
+                    "tenant_id": record.tenant_id,
                     "position": record.position,
                     "tries_left": self._max_publish_attempts,
                 }
@@ -82,7 +83,9 @@ class SqlAlchemyOutboxStorageStrategy(OutboxStorageStrategy):
             context=entry.data["context"],
         )
         try:
-            yield RecordedRaw(entry=raw, position=entry.position)
+            yield RecordedRaw(
+                entry=raw, position=entry.position, tenant_id=entry.tenant_id
+            )
         except Exception:
             logger.exception("Failed to publish message #%d", entry.id)
             entry.tries_left -= 1

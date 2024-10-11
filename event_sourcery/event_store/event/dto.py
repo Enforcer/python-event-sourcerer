@@ -7,24 +7,28 @@ from pydantic import BaseModel, Field
 
 from event_sourcery.event_store.event.registry import EventRegistry
 from event_sourcery.event_store.stream_id import StreamId
+from event_sourcery.event_store.tenant_id import TenantId
 
 
-class RawEvent(BaseModel):
+@dataclass(frozen=True)
+class RawEvent:
     uuid: UUID
     stream_id: StreamId
     created_at: datetime
-    version: int | None = None
     name: str
     data: dict
     context: dict
+    version: int | None = None
 
 
 Position: TypeAlias = int
 
 
-class RecordedRaw(BaseModel):
+@dataclass(frozen=True)
+class RecordedRaw:
     entry: RawEvent
     position: Position
+    tenant_id: TenantId
 
 
 class Event(BaseModel, extra="forbid"):
@@ -82,3 +86,4 @@ class Recorded:
     wrapped_event: WrappedEvent
     stream_id: StreamId
     position: Position
+    tenant_id: TenantId

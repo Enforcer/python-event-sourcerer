@@ -14,6 +14,7 @@ from event_sourcery import event_store as es
 from event_sourcery.event_store import Event, Position, Recorded, StreamId, WrappedEvent
 from event_sourcery.event_store.factory import Backend, TransactionalBackend
 from event_sourcery.event_store.subscription import BuildPhase, PositionPhase
+from event_sourcery.event_store.tenant_id import DEFAULT_TENANT, TenantId
 from tests.matchers import any_wrapped_event
 
 
@@ -109,11 +110,13 @@ class InTransactionListener:
         wrapped_event: WrappedEvent,
         stream_id: StreamId,
         position: Position | None,
+        tenant_id: TenantId = DEFAULT_TENANT,
     ) -> None:
         record = Recorded(
             wrapped_event=wrapped_event,
             stream_id=stream_id,
             position=position or 0,
+            tenant_id=tenant_id,
         )
         self._records.append(record)
 
