@@ -232,7 +232,9 @@ class InMemoryStorageStrategy(StorageStrategy):
         self._outbox = outbox_strategy
 
     def scoped_for_tenant(self, tenant_id: str) -> Self:
-        raise NotImplementedError
+        return type(self)(
+            storage=Storage(), dispatcher=self._dispatcher, outbox_strategy=self._outbox
+        )
 
     def fetch_events(
         self,

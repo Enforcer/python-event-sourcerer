@@ -3,7 +3,7 @@ import pytest
 from event_sourcery.event_store import Event, EventStore, StreamId
 
 pytestmark = pytest.mark.skip_backend(
-    backend=["esdb", "in_memory", "django"],
+    backend=["esdb", "django"],
     reason="Skipped for now, for the sake of PoC.",
 )
 
