@@ -16,5 +16,5 @@ docs-serve:
 
 .PHONY: lint-fix-docs
 lint-fix-docs:
-	ruff format docs/documentation/code tests/
+	ruff format docs/documentation/code
 	ruff check docs/documentation/code --fix
